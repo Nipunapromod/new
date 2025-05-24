@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Record</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h2>Edit Record for {{ record[0] }}</h2>
+  <form method="POST">
+    <label>Subject:</label><br>
+    <input name="subject" value="{{ record[1] }}" required><br><br>
+
+    <label>Marks:</label><br>
+    <input name="marks" type="number" value="{{ record[2] }}" required><br><br>
+
+    <button type="submit">Update</button>
+  </form>
+  <br>
+  <a href="/view_records">Back to All Records</a>
+</body>
+</html>
