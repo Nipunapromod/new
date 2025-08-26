@@ -25,10 +25,18 @@ const User = mongoose.models.User || mongoose.model('User', userSchema);
 export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
 
-    await connectToDatabase();
+    try {
+        await connectToDatabase();
+    } catch (err) {
+        return res.status(500).json({ message: 'Database connection error', error: err.message });
+    }
 
-    // Ensure body is parsed
-    const { email, name } = req.body || {};
+    let email, name;
+    try {
+        ({ email, name } = req.body || {});
+    } catch (err) {
+        return res.status(400).json({ message: 'Invalid request body' });
+    }
 
     if (!email || !name) {
         return res.status(400).json({ message: 'Name and email are required' });
