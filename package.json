@@ -1,0 +1,10 @@
+{
+  "name": "vercel-mongo-form",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "mongoose": "^7.0.0"
+  }
+}
