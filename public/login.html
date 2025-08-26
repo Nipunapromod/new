@@ -2,39 +2,52 @@
 <html>
 <head>
     <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <h2>Login</h2>
-    <form id="loginForm">
-        <label>Name:</label>
-        <input type="text" name="name" required><br><br>
+    <form id="loginForm" autocomplete="on">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required><br><br>
 
-        <label>Email:</label>
-        <input type="email" name="email" required><br><br>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required><br><br>
 
-        <button type="submit">Login</button>
+        <button type="submit" id="loginBtn">Login</button>
     </form>
 
-    <p id="message"></p>
+    <p id="message" aria-live="polite"></p>
 
     <script>
         const form = document.getElementById('loginForm');
+        const message = document.getElementById('message');
+        const loginBtn = document.getElementById('loginBtn');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            message.innerText = '';
+            loginBtn.disabled = true;
+            loginBtn.innerText = 'Logging in...';
             const formData = new FormData(form);
             const data = {
                 name: formData.get('name'),
                 email: formData.get('email')
             };
 
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
 
-            const result = await res.json();
-            document.getElementById('message').innerText = result.message;
+                const result = await res.json();
+                message.innerText = result.message || 'Unknown response';
+            } catch (err) {
+                message.innerText = 'Network error. Please try again.';
+            }
+            loginBtn.disabled = false;
+            loginBtn.innerText = 'Login';
         });
     </script>
 </body>

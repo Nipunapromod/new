@@ -2,28 +2,35 @@
 <html>
 <head>
     <title>Submit Data</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <h2>Submit Your Info</h2>
-    <form id="submitForm">
-        <label>Name:</label>
-        <input type="text" name="name" required><br><br>
+    <form id="submitForm" autocomplete="on">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required><br><br>
 
-        <label>Email:</label>
-        <input type="email" name="email" required><br><br>
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required><br><br>
 
-        <label>Age:</label>
-        <input type="number" name="age" required><br><br>
+        <label for="age">Age:</label>
+        <input type="number" name="age" id="age" required min="1"><br><br>
 
-        <button type="submit">Submit</button>
+        <button type="submit" id="submitBtn">Submit</button>
     </form>
 
-    <p id="message"></p>
+    <p id="message" aria-live="polite"></p>
 
     <script>
         const form = document.getElementById('submitForm');
+        const message = document.getElementById('message');
+        const submitBtn = document.getElementById('submitBtn');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            message.innerText = '';
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Submitting...';
             const formData = new FormData(form);
             const data = {
                 name: formData.get('name'),
@@ -31,14 +38,20 @@
                 age: formData.get('age')
             };
 
-            const res = await fetch('/api/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+            try {
+                const res = await fetch('/api/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
 
-            const result = await res.json();
-            document.getElementById('message').innerText = result.message;
+                const result = await res.json();
+                message.innerText = result.message || 'Unknown response';
+            } catch (err) {
+                message.innerText = 'Network error. Please try again.';
+            }
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Submit';
         });
     </script>
 </body>

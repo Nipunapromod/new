@@ -27,7 +27,12 @@ export default async function handler(req, res) {
 
     await connectToDatabase();
 
-    const { email, name } = req.body;
+    // Ensure body is parsed
+    const { email, name } = req.body || {};
+
+    if (!email || !name) {
+        return res.status(400).json({ message: 'Name and email are required' });
+    }
 
     try {
         const user = await User.findOne({ email, name });

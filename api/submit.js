@@ -27,7 +27,10 @@ export default async function handler(req, res) {
 
     await connectToDatabase();
 
-    const { name, email, age } = req.body;
+    const { name, email, age } = req.body || {};
+    if (!name || !email || !age) {
+        return res.status(400).json({ message: 'Name, email, and age are required' });
+    }
     try {
         const user = await User.create({ name, email, age });
         res.status(200).json({ message: 'Data saved successfully!' });
